@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<body>
+    <div class="container">
+        <h1>Books</h1>
+        <button id="Fetch Books">Fetch Books</button>
+        <button id="addBookBtn">Add Book</button>
+        <button id="editBookBtn">Edit Book</button>
+        <button id="deleteBookBtn">Delete Book</button>
+        
+
+        <button id="searchByCategoryBtn">Search by Category</button>
+        <button id="searchByAuthorBtn">Search by Author</button>
+
+
+        <div id="searchByCategory" hidden>
+            <input type="text" id="categorySearch" placeholder="Category">
+            <button id="categorySearchBtn">Search</button>
+        </div>
+        <div id="searchByAuthor" hidden>
+            <input type="text" id="authorSearch" placeholder="Author">
+            <button id="authorSearchBtn">Search</button>
+        </div>
+
+        <div class="book-list">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>State</th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="bookTableBody">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="form-container" id="formsContainer">
+        <div class="form-box" id="addBookForm" hidden>
+            <h3>Add New Book</h3>
+            <input type="text" id="title" placeholder="Title" required>
+            <input type="text" id="author" placeholder="Author" required>
+            <input type="text" id="state" placeholder="State" required>
+            <textarea id="description" placeholder="Description"></textarea>
+            <input type="text" id="category" placeholder="Category">
+            <button id="saveBookBtn">Save changes</button>
+        </div>
+
+        <div class="form-box" id="editBookForm" hidden>
+            <h3>Edit Book</h3>
+            <input type="text" id="editId" placeholder="Id" required>
+            <input type="text" id="editTitle" placeholder="Title" required>
+            <input type="text" id="editAuthor" placeholder="Author" required>
+            <input type="text" id="editState" placeholder="State" required>
+            <textarea id="editDescription" placeholder="Description"></textarea>
+            <input type="text" id="editCategory" placeholder="Category">
+            <button id="editBookFormBtn">Save changes</button>
+        </div>
+
+        <div class="form-box" id="deleteBookForm" hidden>
+            <h3>Delete Book</h3>
+            <input type="number" id="deleteId" placeholder="Id" required>
+            <button id="deleteBookFormBtn">Delete Book</button>
+        </div>
+    </div>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column; 
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin-bottom: 20px; 
+        }
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .book-list {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #formsContainer {
+            display: block;
+            width: 80%;
+            max-width: 800px;
+        }
+
+        .form-box {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px; 
+        }
+
+        .form-box input, .form-box textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-box button {
+            width: 100%;
+            padding: 10px;
+            background: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-box button:hover {
+            background: #218838;
+        }
+
+        .form-box[hidden] {
+            display: none;
+        }
+
+
+        #searchByCategory, #searchByAuthor {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #searchByCategory input, #searchByAuthor input {
+            padding: 8px;
+            width: 200px;
+            margin-right: 10px;
+        }
+    </style>
+
+    <script>
+        document.getElementById("Fetch Books").addEventListener("click", async () => {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+
+            const response = await fetch('http://localhost:5288/api/Book/Browse', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const books = await response.json();
+                const tableBody = document.getElementById('bookTableBody');
+                tableBody.innerHTML = ''; 
+                books.forEach(book => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${book.id}</td>
+                        <td>${book.title}</td>
+                        <td>${book.author}</td>
+                        <td>${book.state}</td>
+                        <td>${book.category}</td>
+                        <td>
+                            ${role === '1' ? 
+                                `<button onclick="editBook(${book.id})">Edit</button>
+                                 <button onclick="deleteBook(${book.id})">Delete</button>` : ''}
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                console.error('Failed to fetch books');
+            }
+        });
+
+        addBookBtn.addEventListener('click', () => {
+            addBookForm.hidden = false;
+        });
+        addBookBtn.addEventListener('dblclick', () => {
+            addBookForm.hidden = true;
+        });
+
+        saveBookBtn.addEventListener('click', async () => {
+            const token = localStorage.getItem('token');
+            const newBook = {
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                state: document.getElementById('state').value,
+                description: document.getElementById('description').value,
+                category: document.getElementById('category').value
+            };
+
+            const response = await fetch('http://localhost:5288/api/Book', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newBook)
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                console.error('Failed to add book');
+            }
+        });
+
+        editBookBtn.addEventListener('dblclick', () => {
+            editBookForm.hidden = true;
+        });
+        editBookBtn.addEventListener('click', () => {
+            editBookForm.hidden = false;
+        });
+
+        function editBook(bookId) {
+            fetch(`http://localhost:5288/api/Book/${bookId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then(response => response.json())
+            .then(book => {
+                document.getElementById('editId').value = book.id;
+                document.getElementById('editTitle').value = book.title;
+                document.getElementById('editAuthor').value = book.author;
+                document.getElementById('editState').value = book.state;
+                document.getElementById('editDescription').value = book.description;
+                document.getElementById('editCategory').value = book.category;
+                editBookForm.hidden = false;
+            })
+            .catch(err => console.error("Error fetching book data:", err));
+        }
+
+        editBookFormBtn.addEventListener('click', async () => {
+            const token = localStorage.getItem('token');
+            const updatedBook = {
+                id: document.getElementById('editId').value,
+                title: document.getElementById('editTitle').value,
+                author: document.getElementById('editAuthor').value,
+                state: document.getElementById('editState').value,
+                description: document.getElementById('editDescription').value,
+                category: document.getElementById('editCategory').value
+            };
+
+            const response = await fetch('http://localhost:5288/api/Book', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedBook)
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                console.error('Failed to update book');
+            }
+        });
+
+        deleteBookBtn.addEventListener('dblclick', () => {
+            deleteBookForm.hidden = true;
+        });
+        deleteBookBtn.addEventListener('click', () => {
+            deleteBookForm.hidden = false;
+        });
+
+        deleteBookFormBtn.addEventListener('click', async () => {
+            const token = localStorage.getItem('token');
+            const bookId = document.getElementById('deleteId').value;
+
+            const response = await fetch(`http://localhost:5288/api/Book/Delete/${bookId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                console.error('Failed to delete book');
+            }
+        });
+        document.getElementById("searchByCategoryBtn").addEventListener("click", async () => {
+        const category = document.getElementById('categorySearch').value.trim();
+        if (category === '') {
+            alert('Please enter a category to search');
+            return;
+        }
+
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await fetch(`http://localhost:5288/api/Book/SearchByCategory/${category}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'accept': '*/*'
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                // Check if there are books in the response
+                if (data.listOfBooks && data.listOfBooks.length > 0) {
+                    const tableBody = document.getElementById('bookTableBody');
+                    tableBody.innerHTML = ''; // Clear previous results
+
+                    data.listOfBooks.forEach(book => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${book.id}</td>
+                            <td>${book.title}</td>
+                            <td>${book.author}</td>
+                            <td>${book.state}</td>
+                            <td>${book.category}</td>
+                            <td>
+                                <button onclick="editBook(${book.id})">Edit</button>
+                                <button onclick="deleteBook(${book.id})">Delete</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    alert('No books found for this category');
+                }
+            } else {
+                console.error('Failed to fetch books by category');
+                alert('Error fetching books by category');
+            }
+        } catch (error) {
+            console.error('Error occurred during fetch:', error);
+            alert('Error occurred during search');
+        }
+    });
+
+        // Search by Author
+        document.getElementById("searchByAuthorBtn").addEventListener("click", async () => {
+            const author = document.getElementById('authorSearch').value;
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`http://localhost:5288/api/Book/SearchByAuthor/${author}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const books = await response.json();
+                const tableBody = document.getElementById('bookTableBody');
+                tableBody.innerHTML = ''; 
+                books.forEach(book => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${book.id}</td>
+                        <td>${book.title}</td>
+                        <td>${book.author}</td>
+                        <td>${book.state}</td>
+                        <td>${book.category}</td>
+                        <td>
+                            <button onclick="editBook(${book.id})">Edit</button>
+                            <button onclick="deleteBook(${book.id})">Delete</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                console.error('Failed to fetch books by author');
+            }
+        });
+
+        // Show search forms
+        document.getElementById("searchByCategoryBtn").addEventListener("click", () => {
+            document.getElementById("searchByCategory").hidden = false;
+            document.getElementById("searchByAuthor").hidden = true;
+        });
+
+        document.getElementById("searchByAuthorBtn").addEventListener("click", () => {
+            document.getElementById("searchByAuthor").hidden = false;
+            document.getElementById("searchByCategory").hidden = true;
+        });
+    </script>
+</body>

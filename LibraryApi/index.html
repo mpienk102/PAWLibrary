@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        button {
+            padding: 5px 10px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #ccc;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            width: 200px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Library Management</h1>
+
+<!-- Login Section -->
+<div id="loginSection">
+    <h3>Login</h3>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+</div>
+
+<!-- Books Section -->
+<div id="booksSection" class="hidden">
+    <h3>Books</h3>
+    <button onclick="loadBooks()">Load Books</button>
+    <button id="addBookButton" onclick="showAddBookForm()" class="hidden">Add Book</button>
+    <table id="booksTable">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>State</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="booksList"></tbody>
+    </table>
+
+    <!-- Add/Edit Book Form -->
+    <div id="addBookForm" class="hidden">
+        <h4>Add/Edit Book</h4>
+        <input type="text" id="bookTitle" placeholder="Title">
+        <input type="text" id="bookAuthor" placeholder="Author">
+        <input type="text" id="bookState" placeholder="State">
+        <textarea id="bookDescription" placeholder="Description"></textarea>
+        <input type="text" id="bookCategory" placeholder="Category">
+        <button onclick="saveBook()">Save Book</button>
+        <button onclick="cancelBookForm()">Cancel</button>
+    </div>
+</div>
+
+<script>
+    let token = localStorage.getItem('token');
+    let userRole = localStorage.getItem('role');
+
+    // Login function
+    async function login() {
+        
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const response = await fetch('http://localhost:5288/api/users/Login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('token', data.Token);
+            token = data.Token;
+
+            // Fetch current user role
+            const userResponse = await fetch('http://localhost:5288/api/users/GetMe', {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            const userData = await userResponse.json();
+            localStorage.setItem('role', userData.role);
+            userRole = userData.role;
+
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('booksSection').classList.remove('hidden');
+            if (userRole === 'SuperUser') {
+                document.getElementById('addBookButton').classList.remove('hidden');
+            }
+        } else {
+            alert('Invalid credentials');
+        }
+    }
+
+    // Load books
+    async function loadBooks() {
+        const response = await fetch('http://localhost:5288/api/Book/Browse', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+            const books = await response.json();
+            const booksList = document.getElementById('booksList');
+            booksList.innerHTML = '';
+
+            books.forEach(book => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${book.title}</td>
+                    <td>${book.author}</td>
+                    <td>${book.state}</td>
+                    <td>
+                        <button onclick="reserveBook(${book.id})">Reserve</button>
+                        ${userRole === 'SuperUser' ? `<button onclick="editBook(${book.id})">Edit</button><button onclick="deleteBook(${book.id})">Delete</button>` : ''}
+                    </td>
+                `;
+                booksList.appendChild(row);
+            });
+        } else {
+            alert('Failed to load books');
+        }
+    }
+
+    // Show Add Book Form
+    function showAddBookForm() {
+        document.getElementById('addBookForm').classList.remove('hidden');
+    }
+
+    // Save a new or edited book
+    async function saveBook() {
+        const bookData = {
+            title: document.getElementById('bookTitle').value,
+            author: document.getElementById('bookAuthor').value,
+            state: document.getElementById('bookState').value,
+            description: document.getElementById('bookDescription').value,
+            category: document.getElementById('bookCategory').value
+        };
+
+        let method = 'POST';
+        let url = 'http://localhost:5288/api/Book';
+
+        if (document.getElementById('bookId')) {
+            method = 'PUT';
+            url = 'http://localhost:5288/api/Book';
+            bookData.id = document.getElementById('bookId').value;
+        }
+
+        const response = await fetch(url, {
+            method: method,
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bookData)
+        });
+
+        if (response.ok) {
+            loadBooks();
+            cancelBookForm();
+        } else {
+            alert('Failed to save book');
+        }
+    }
+
+    // Edit a book
+    async function editBook(bookId) {
+        const response = await fetch(`http://localhost:5288/api/Book/SearchById/${bookId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const book = await response.json();
+        document.getElementById('bookTitle').value = book.title;
+        document.getElementById('bookAuthor').value = book.author;
+        document.getElementById('bookState').value = book.state;
+        document.getElementById('bookDescription').value = book.description;
+        document.getElementById('bookCategory').value = book.category;
+        document.getElementById('bookId').value = book.id;
+
+        showAddBookForm();
+    }
+
+    // Delete a book
+    async function deleteBook(bookId) {
+        const response = await fetch(`http://localhost:5288/api/Book/Delete/${bookId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+            loadBooks();
+        } else {
+            alert('Failed to delete book');
+        }
+    }
+
+    // Reserve a book
+    async function reserveBook(bookId) {
+        const response = await fetch(`http://localhost:5288/api/Reservations/ReserveBook/${bookId}`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+            alert('Book reserved successfully!');
+        } else {
+            alert('Failed to reserve book');
+        }
+    }
+
+    // Cancel Add/Edit book form
+    function cancelBookForm() {
+        document.getElementById('addBookForm').classList.add('hidden');
+    }
+</script>
+
+</body>
+</html>
