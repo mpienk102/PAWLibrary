@@ -2,10 +2,11 @@ using LibraryApi.Models;
 
 public interface IReservationRepository
 {
-    IEnumerable<Reservation> GetAllReservations();
-    Reservation? GetReservationById(int reservationId);
-    IEnumerable<Reservation> GetReservationsByUserId(int userId);
-    void Add (Reservation reservation);
-    void Update(int reservationId, Reservation updatedReservation);
-    void Delete(int reservationId);
+    Task<IEnumerable<Reservation>> GetAllReservations();
+    Task<Reservation?> GetReservationById(int reservationId);
+    Task<IEnumerable<Reservation>> GetReservationsByUserId(int userId);
+    Task<IEnumerable<Book>> GetBooksByIds(IEnumerable<int> bookIds);
+    Task Add (Reservation reservation);
+    Task Update(int reservationId, Reservation updatedReservation);
+    Task Delete(int reservationId);
 }

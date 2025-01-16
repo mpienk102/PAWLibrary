@@ -18,15 +18,15 @@ namespace LibraryApi.Models
         [Required]
         public string? Description { get; set; }
 
-        // Remove the `true` flag from the JsonConverter here
-        [JsonConverter(typeof(StringEnumConverter))]  // Enum will be serialized as its string value
+        [JsonConverter(typeof(StringEnumConverter))]  
         [Required]
         public BookState State { get; set; }
-
+        
+        [JsonConverter(typeof(StringEnumConverter))]
         [Required]
-        public string? Category { get; set; }
+        public BookCategory Category { get; set; }
 
-        public Book(int id, string title, string author, string description, BookState state, string category)
+        public Book(int id, string title, string author, string description, BookState state, BookCategory category)
         {
             Id = id;
             Title = title;
@@ -46,5 +46,12 @@ namespace LibraryApi.Models
         Available,   
         Unavailable, 
         Reserved
+    }
+    public enum BookCategory
+    {
+        Comedy,
+        Fantasy,
+        Horror, 
+        Thriller
     }
 }

@@ -1,12 +1,12 @@
 using LibraryApi.Models;
 public interface IBookRepository{
 
-    IEnumerable<Book> GetAll();
-    Book? GetById(int id);
-    Book? GetBookByTitleAndAuthor(string title, string author);
-    IEnumerable<Book> GetByCategory(string category);
-    IEnumerable<Book> GetByAuthor(string author);
-    void Add(Book book);
-    void Update(int id, Book updatedBook);
-    void Delete(int id);
+    Task<IEnumerable<Book>> GetAll();
+    Task<Book?> GetById(int id);
+    Task<Book?> GetBookByTitleAndAuthor(string title, string author);
+    Task<IEnumerable<Book>> GetByCategory(BookCategory category);
+    Task<IEnumerable<Book>> GetByAuthor(string author);
+    Task Add(Book book);
+    Task Update(int id, Book updatedBook);
+    Task Delete(int id);
 }

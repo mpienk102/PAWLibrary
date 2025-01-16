@@ -7,7 +7,7 @@ public interface IUserService
     Task<User?> GetUserById(int userId);
     Task<IEnumerable<User>> GetAllUsers();
     Task<User?> GetMe(ClaimsPrincipal userIdentity); 
-    public Task Delete(int userId);
+    Task Delete(int userId);
 
 
 }

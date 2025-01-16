@@ -1,5 +1,6 @@
 
 using LibraryApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApi.Repositories
 {
@@ -12,25 +13,31 @@ namespace LibraryApi.Repositories
             _context = context;
         }
 
-        public IEnumerable<Reservation> GetAllReservations() => _context.Reservations.ToList();
+        public async Task<IEnumerable<Reservation>> GetAllReservations() => await _context.Reservations.ToListAsync();
 
-        public Reservation? GetReservationById(int reservationId)
+        public async Task<Reservation?> GetReservationById(int reservationId)
         {
-            return _context.Reservations.Find(reservationId);
+            return await _context.Reservations.FindAsync(reservationId);
         }
-        public IEnumerable<Reservation> GetReservationsByUserId(int userId)
+        public async Task<IEnumerable<Reservation>> GetReservationsByUserId(int userId)
         {
-            var result = _context.Reservations
+            var result = await _context.Reservations
             .Where(reservation => reservation.UserId.Equals(userId))
-            .ToList();
+            .ToListAsync();
             return result;
         }
-        public void Add(Reservation reservation)
+        public async Task<IEnumerable<Book>> GetBooksByIds(IEnumerable<int> bookIds)
+        {
+            return await _context.Books
+                .Where(book => bookIds.Contains(book.Id))
+                .ToListAsync();
+        }
+        public async Task Add(Reservation reservation)
         {
             _context.Reservations.Add(reservation);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
-        public void Update(int reservationId, Reservation updatedReservation)
+        public async Task Update(int reservationId, Reservation updatedReservation)
         {
             var existingReservation = _context.Reservations.Find(reservationId);
             if (existingReservation is not null)
@@ -38,14 +45,15 @@ namespace LibraryApi.Repositories
                 existingReservation.ReservedBookId = updatedReservation.ReservedBookId;
                 existingReservation.UserId = updatedReservation.UserId;
             }
+            await _context.SaveChangesAsync();
         }
-        public void Delete(int reservationId)
+        public async Task Delete(int reservationId)
         {
             var existingReservation = _context.Reservations.Find(reservationId);
             if (existingReservation is not null)
             {
                 _context.Reservations.Remove(existingReservation);
-                _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
         }
     }   

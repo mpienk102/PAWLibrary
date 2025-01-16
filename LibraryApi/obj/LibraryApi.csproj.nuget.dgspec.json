@@ -10,11 +10,11 @@
         "projectUniqueName": "/home/mint/Desktop/PAW/LibraryApp/LibraryApi/LibraryApi.csproj",
         "projectName": "LibraryApi",
         "projectPath": "/home/mint/Desktop/PAW/LibraryApp/LibraryApi/LibraryApi.csproj",
-        "packagesPath": "/home/mint/.nuget/packages/",
+        "packagesPath": "/root/.nuget/packages/",
         "outputPath": "/home/mint/Desktop/PAW/LibraryApp/LibraryApi/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/mint/.nuget/NuGet/NuGet.Config"
+          "/root/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"

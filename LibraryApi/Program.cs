@@ -9,6 +9,8 @@ using System.Text.Json.Serialization;  // Don't forget to add this
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
+var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
@@ -44,7 +46,10 @@ builder.Services.AddAuthentication(x =>
 
 builder.Services.AddSwaggerGen(options =>
 {
+    options.IncludeXmlComments(xmlPath);
     options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+    options.TagActionsBy(api => new[] { api.ActionDescriptor.RouteValues["controller"] });
+
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -69,7 +74,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddDbContext<LibraryDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresDb")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresDb")), ServiceLifetime.Scoped);
+
 builder.Services.AddAuthentication();
 
 builder.Services.AddScoped<IBookRepository, BookRepository>();

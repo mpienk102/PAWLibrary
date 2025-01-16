@@ -19,14 +19,21 @@ public class UserController : ControllerBase
         _userService = userService;
         _config = config;
     }
-
+    /// <summary>
+    /// Get list of users
+    /// </summary>
+    /// <returns>List of Users</returns>
     [HttpGet("Browse")]
     public async Task<IActionResult> GetAllUsers()
     {
         var users = await _userService.GetAllUsers(); // Await the async method
         return Ok(users);
     }
-
+    /// <summary>
+    /// Get User data by its id.
+    /// </summary>
+    /// <param name="id">User ID</param>
+    /// <returns>User data by given id.</returns>
     [HttpGet("SearchById/{id}")]
     public async Task<IActionResult> GetUserById(int id)
     {
@@ -34,14 +41,35 @@ public class UserController : ControllerBase
         if (user is null) return NotFound();
         return Ok(user);
     }
-
+    /// <summary>
+    /// Register user
+    /// </summary>
+    /// <param name="registerDto">DTO from body</param>
+    /// <returns></returns>
     [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] RegisterDTO registerDto)
     {
-        var user = await _userService.RegisterAsync(registerDto.Username, registerDto.Email, registerDto.Password);
-        return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+        try
+        {
+            var user = await _userService.RegisterAsync(registerDto.Username, registerDto.Email, registerDto.Password);
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+        }
+        catch (ArgumentException ex)
+        {
+            // Return a BadRequest response with a structured error message
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            // Handle other exceptions
+            return StatusCode(500, new { message = "An unexpected error occurred." });
+        }
     }
 
+    /// <summary>
+    /// Get logged in user data
+    /// </summary>
+    /// <returns>Current user data</returns>
     [HttpGet("GetMe")]
     public async Task<IActionResult> GetMe()
     {
@@ -53,7 +81,11 @@ public class UserController : ControllerBase
 
         return Ok(currentUser);
     }
-
+    /// <summary>
+    /// Authorize user
+    /// </summary>
+    /// <param name="loginDto"></param>
+    /// <returns></returns>
     [HttpPost("Login")]
     public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
     {
@@ -66,6 +98,11 @@ public class UserController : ControllerBase
         var token = GenerateJwtToken(user);
         return Ok(new { Token = token });
     }
+    /// <summary>
+    /// Remove user from Db by id
+    /// </summary>
+    /// <param name="userId">Specific user Id</param>
+    /// <returns></returns>
     [HttpDelete]
     public async Task<IActionResult> DeleteUser(int userId)
     {
@@ -86,7 +123,7 @@ public class UserController : ControllerBase
     {
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Username),
+            // new Claim(JwtRegisteredClaimNames.Sub, user.Username),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
         };
