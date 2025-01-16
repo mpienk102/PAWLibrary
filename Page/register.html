@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .register-container{
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .register-container h1, .info-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .register-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .register-container button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .register-container button:hover {
+            background: #0056b3;
+        }
+        .register-container a {
+            width: 100%;
+            height: 30px;
+            display: inline-block;
+            padding-top: 10px;
+            color: white;
+            background-color: #007bff;
+            text-decoration: none;
+            font-size: 13px;
+            border: none;
+            border-radius: 5px;
+        }
+        .register-container a:hover {
+            text-decoration: underline;
+        }
+        .info-container ul {
+            display: block;
+            align-items: center;
+        }
+        .info-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-left: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h1>Register</h1>
+        <form id="registerForm">
+            <input type="text" id="username" placeholder="Username" required />
+            <input type="password" id="password" placeholder="Password" required />
+            <input type="text" id="email" placeholder="Email" required />
+            <button type="submit">Register</button>
+            <p id="infoBox"></p>
+        </form>
+        <a href="login.html">Return to login page</a>
+    </div>
+    <div class="info-container">
+        <h1>Registration info</h1>
+        <h2>Username rules</h2>
+        <ul>Must be unique</ul>
+        <h2>Password rules</h2>
+        <ul>At least 8 character in length</ul>
+        <ul>At least one special character in {@#$%^&*} </ul>
+        <ul>At least one digit</ul>
+        <ul>At least one uppercase and lowercase letter<0/ul>
+        <h2>Email rules</h2>
+        <ul>format: username@domain.com</ul>
+    </div>
+
+    <script>
+    document.getElementById('registerForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const email = document.getElementById('email').value;
+        const form = document.getElementById('registerForm');
+
+        try {
+            const registerResponse = await fetch('http://localhost:5288/api/users/Register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, password })
+            });
+
+            if (registerResponse.ok) {
+                infoBox.innerHTML = "You've registered successfully. Redirecting...";
+                setTimeout(() => {
+                    window.location.href = "/login.html";
+                }, 3000);
+            } else {
+                const errorInfo = await registerResponse.json();
+                alert(errorInfo.message); 
+                form.reset();
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            alert("An unexpected error occurred. Please try again later.");
+        }
+    });
+
+    </script>
+</body>
+</html>

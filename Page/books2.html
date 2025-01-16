@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <body>
     <div class="container">
+        <a href="reservations.html">Go to reservations</a>
+        <a href="#" id="logoutBtn">Logout</a>
         <h1>Books</h1>
         <button id="Fetch Books">Fetch Books</button>
-        <button id="addBookBtn">Add Book</button>
-        <button id="editBookBtn">Edit Book</button>
-        <button id="deleteBookBtn">Delete Book</button>
+        <button id="addBookBtn" hidden>Add Book</button>
+        <button id="editBookBtn" hidden>Edit Book</button>
+        <button id="deleteBookBtn" hidden>Delete Book</button>
         
 
         <button id="searchByCategoryBtn">Search by Category</button>
@@ -13,10 +15,17 @@
 
 
         <div id="searchByCategory" hidden>
-            <input type="text" id="categorySearch" placeholder="Category">
+            <h3> Search by category</h3>
+            <select id="categorySearch" required>
+                <option value="Comedy">Comedy</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Horror">Horror</option>
+                <option value="Thriller">Thriller</option>
+            </select>
             <button id="categorySearchBtn">Search</button>
         </div>
         <div id="searchByAuthor" hidden>
+            <h3> Search by author</h3>
             <input type="text" id="authorSearch" placeholder="Author">
             <button id="authorSearchBtn">Search</button>
         </div>
@@ -44,34 +53,63 @@
     <div class="form-container" id="formsContainer">
         <div class="form-box" id="addBookForm" hidden>
             <h3>Add New Book</h3>
+            <label for="title">Title:</label>
             <input type="text" id="title" placeholder="Title" required>
+            <label for="author">Author:</label>
             <input type="text" id="author" placeholder="Author" required>
-            <input type="text" id="state" placeholder="State" required>
+            <label for="state">State:</label>
+            <select id="state" required>
+                <option value="Available">Available</option>
+                <option value="Unavailable">Unavailable</option>
+                <option value="Reserved">Reserved</option>
+            </select>
+            <label for="description">Description:</label>
             <textarea id="description" placeholder="Description"></textarea>
-            <input type="text" id="category" placeholder="Category">
+            <label for="category">Category:</label>
+            <select id="category" required>
+                <option value="Comedy">Comedy</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Horror">Horror</option>
+                <option value="Thriller">Thriller</option>
+            </select>
             <button id="saveBookBtn">Save changes</button>
         </div>
 
+
         <div class="form-box" id="editBookForm" hidden>
             <h3>Edit Book</h3>
+            <label for="editId">Book Id:</label>
             <input type="text" id="editId" placeholder="Id" required>
+            <label for="editTitle">New title:</label>
             <input type="text" id="editTitle" placeholder="Title" required>
+            <label for="editAuthor">New author:</label>
             <input type="text" id="editAuthor" placeholder="Author" required>
-            <input type="text" id="editState" placeholder="State" required>
+            <label for="editState">New state:</label>
+            <select id="editState" required>
+                <option value="Available">Available</option>
+                <option value="Unavailable">Unavailable</option>
+                <option value="Reserved">Reserved</option>
+            </select>
+            <label for="editDescription">New description:</label>
             <textarea id="editDescription" placeholder="Description"></textarea>
-            <input type="text" id="editCategory" placeholder="Category">
+            <label for="editCategory">Category:</label>
+            <select id="editCategory" required>
+                <option value="Comedy">Comedy</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Horror">Horror</option>
+                <option value="Thriller">Thriller</option>
+            </select>
             <button id="editBookFormBtn">Save changes</button>
         </div>
-
         <div class="form-box" id="deleteBookForm" hidden>
             <h3>Delete Book</h3>
+            <label for="deleteId">Deleted book id:</label>
             <input type="number" id="deleteId" placeholder="Id" required>
             <button id="deleteBookFormBtn">Delete Book</button>
         </div>
     </div>
 
     <style>
-
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
@@ -82,6 +120,7 @@
             height: 100vh;
             margin: 0;
         }
+
         .container {
             background: #fff;
             padding: 20px;
@@ -91,11 +130,13 @@
             max-width: 800px;
             margin-bottom: 20px; 
         }
-        h1 {
-            margin-bottom: 20px;
+
+        h1, h2, h3 {
+            margin-bottom: 10px;
             text-align: center;
         }
-        button {
+
+        button, a {
             padding: 10px 20px;
             margin: 10px;
             border: none;
@@ -104,16 +145,20 @@
             color: #fff;
             cursor: pointer;
         }
+
         button:hover {
             background-color: #0056b3;
         }
+
         .book-list {
             margin-top: 20px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
+
         th, td {
             padding: 10px;
             text-align: left;
@@ -134,7 +179,7 @@
             margin-bottom: 20px; 
         }
 
-        .form-box input, .form-box textarea {
+        .form-box input, .form-box textarea, .form-box select {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -160,10 +205,49 @@
             display: none;
         }
 
-
         #searchByCategory, #searchByAuthor {
             margin-top: 20px;
             text-align: center;
+        }
+
+        .search-category-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px; 
+        }
+
+        .categorySearch {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: #f4f4f9;
+            color: #333;
+            width: 200px;
+        }
+
+        .categorySearch:hover {
+            border-color: #007bff;
+        }
+
+        .categorySearch:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        button#categorySearchBtn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        button#categorySearchBtn:hover {
+            background-color: #0056b3;
         }
 
         #searchByCategory input, #searchByAuthor input {
@@ -171,9 +255,45 @@
             width: 200px;
             margin-right: 10px;
         }
+
+        #searchByCategory {
+            text-align: center;
+        }
+
+        #searchByAuthor {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #searchByAuthor input {
+            padding: 8px;
+            width: 200px;
+            margin-right: 10px;
+        }
+
+        #searchByCategoryBtn, #searchByAuthorBtn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        #searchByCategoryBtn:hover, #searchByAuthorBtn:hover {
+            background-color: #0056b3;
+        }
     </style>
 
     <script>
+        document.addEventListener("DOMContentLoaded", () =>{
+            const token = localStorage.getItem('token');
+            console.log(localStorage.getItem('userId'));
+            if (!token){
+                alert("You must be logged in");
+                window.location.href = '/login.html';
+            }
+        });
         document.getElementById("Fetch Books").addEventListener("click", async () => {
             const token = localStorage.getItem('token');
             const role = localStorage.getItem('role');
@@ -216,7 +336,7 @@
             addBookForm.hidden = true;
         });
 
-        saveBookBtn.addEventListener('click', async () => {
+        document.getElementById('saveBookBtn').addEventListener('click', async () => {
             const token = localStorage.getItem('token');
             const newBook = {
                 title: document.getElementById('title').value,
@@ -225,7 +345,6 @@
                 description: document.getElementById('description').value,
                 category: document.getElementById('category').value
             };
-
             const response = await fetch('http://localhost:5288/api/Book', {
                 method: 'POST',
                 headers: {
@@ -234,12 +353,8 @@
                 },
                 body: JSON.stringify(newBook)
             });
-
-            if (response.ok) {
-                location.reload();
-            } else {
-                console.error('Failed to add book');
-            }
+            if (response.ok) location.reload();
+            else console.error('Failed to add book');
         });
 
         editBookBtn.addEventListener('dblclick', () => {
@@ -291,7 +406,19 @@
             if (response.ok) {
                 location.reload();
             } else {
-                console.error('Failed to update book');
+                try {
+                    const contentType = response.headers.get('Content-Type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const responseError = await response.json();
+                        alert(responseError.message);
+                    } else {
+                        const errorText = await response.text(); 
+                        alert(`Error: ${errorText}`);
+                    }
+                } catch (err) {
+                    console.error('Error parsing response:', err);
+                    alert('An unexpected error occurred.');
+                }
             }
         });
 
@@ -314,12 +441,15 @@
             });
 
             if (response.ok) {
+                alert('Deleting was succesfull');
                 location.reload();
             } else {
+                const deleteInfo = await response.text();
+                alert(deleteInfo);
                 console.error('Failed to delete book');
             }
         });
-        document.getElementById("searchByCategoryBtn").addEventListener("click", async () => {
+        document.getElementById("categorySearchBtn").addEventListener("click", async () => {
         const category = document.getElementById('categorySearch').value.trim();
         if (category === '') {
             alert('Please enter a category to search');
@@ -338,11 +468,9 @@
 
             if (response.ok) {
                 const data = await response.json();
-
-                // Check if there are books in the response
                 if (data.listOfBooks && data.listOfBooks.length > 0) {
                     const tableBody = document.getElementById('bookTableBody');
-                    tableBody.innerHTML = ''; // Clear previous results
+                    tableBody.innerHTML = ''; 
 
                     data.listOfBooks.forEach(book => {
                         const row = document.createElement('tr');
@@ -352,10 +480,6 @@
                             <td>${book.author}</td>
                             <td>${book.state}</td>
                             <td>${book.category}</td>
-                            <td>
-                                <button onclick="editBook(${book.id})">Edit</button>
-                                <button onclick="deleteBook(${book.id})">Delete</button>
-                            </td>
                         `;
                         tableBody.appendChild(row);
                     });
@@ -371,23 +495,30 @@
             alert('Error occurred during search');
         }
     });
+    document.getElementById("authorSearchBtn").addEventListener("click", async () => {
+    const author = document.getElementById('authorSearch').value.trim();
+    if (!author) {
+        alert('Please enter an author to search');
+        return;
+    }
 
-        // Search by Author
-        document.getElementById("searchByAuthorBtn").addEventListener("click", async () => {
-            const author = document.getElementById('authorSearch').value;
-            const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
-            const response = await fetch(`http://localhost:5288/api/Book/SearchByAuthor/${author}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+    try {
+        const response = await fetch(`http://localhost:5288/api/Book/SearchByAuthor/${encodeURIComponent(author)}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json',
+            },
+        });
 
-            if (response.ok) {
-                const books = await response.json();
+        if (response.ok) {
+            const data = await response.json();
+            if (data && data.length > 0) { // Ensure response contains an array
                 const tableBody = document.getElementById('bookTableBody');
                 tableBody.innerHTML = ''; 
-                books.forEach(book => {
+
+                data.forEach((book) => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${book.id}</td>
@@ -395,19 +526,21 @@
                         <td>${book.author}</td>
                         <td>${book.state}</td>
                         <td>${book.category}</td>
-                        <td>
-                            <button onclick="editBook(${book.id})">Edit</button>
-                            <button onclick="deleteBook(${book.id})">Delete</button>
-                        </td>
                     `;
                     tableBody.appendChild(row);
                 });
             } else {
-                console.error('Failed to fetch books by author');
+                alert('No books found for this author');
             }
-        });
-
-        // Show search forms
+        } else {
+            console.error('Failed to fetch books by author');
+            alert('Error fetching books by author');
+        }
+    } catch (error) {
+        console.error('Error occurred during fetch:', error);
+        alert('An error occurred during the search');
+    }
+});
         document.getElementById("searchByCategoryBtn").addEventListener("click", () => {
             document.getElementById("searchByCategory").hidden = false;
             document.getElementById("searchByAuthor").hidden = true;
@@ -417,5 +550,19 @@
             document.getElementById("searchByAuthor").hidden = false;
             document.getElementById("searchByCategory").hidden = true;
         });
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        localStorage.removeItem('userId');
+
+        window.location.href = 'login.html'; 
+    });
+    console.log(localStorage.getItem('role'));
+    if(localStorage.getItem('role') == 'SuperUser')
+    {
+        addBookBtn.hidden = false;
+        deleteBookBtn.hidden = false;
+        editBookBtn.hidden = false;
+    }
     </script>
 </body>

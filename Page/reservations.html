@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<body>
+    <div class="container">
+        <a href="books2.html">Go to books</a>
+        <a href="#" id="logoutBtn">Logout</a>
+        <h1>Book Reservations</h1>
+
+        <button id="fetchReservationsBtn">Search for available books</button>
+        <button id="reserveBookBtn">Reserve Book</button>
+        <button id="returnBookBtn">Return Book</button>
+        <button id="myReservationsBtn">My reservations</button>
+
+
+        <div class="reservation-list" id="listOfReservations" hidden>
+            <h3>Available Books</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>State</th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="reservationTableBody">
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="reservation-list" id="myReservationsDiv" hidden>
+            <h3>My Reservations</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Reservation ID</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="myReservationsTableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div id="reserveBookForm" hidden>
+            <h3>Reserve a Book</h3>
+            <label for="bookId">Book id:</label>
+            <input type="number" id="bookId" placeholder="Enter Book ID" required>
+            <button id="reserveBookSubmitBtn">Reserve Book</button>
+        </div>
+
+
+        <div id="returnBookForm" hidden>
+            <h3>Return Book</h3>
+            <input type="number" id="reservationId" placeholder="Enter Reservation ID" required>
+            <button id="returnBookSubmitBtn">Return Book</button>
+        </div>
+    </div>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        button, a {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .reservation-list {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #reserveBookForm, #returnBookForm {
+            margin-top: 20px;
+            background-color: #f4f4f9;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () =>{
+            const token = localStorage.getItem('token');
+            console.log(localStorage.getItem('userId'));
+            if (!token){
+                alert("You must be logged in");
+                window.location.href = '/login.html';
+            }
+        });
+        // Fetch available books
+        document.getElementById("fetchReservationsBtn").addEventListener("click", async () => {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+
+            const response = await fetch('http://localhost:5288/api/Book/Browse', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const books = await response.json();
+                const availableBooks = books.filter(book => book.state === 'Available');
+                const tableBody = document.getElementById('reservationTableBody');
+                document.getElementById('listOfReservations').hidden = false;
+                tableBody.innerHTML = ''; 
+                availableBooks.forEach(book => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${book.id}</td>
+                        <td>${book.title}</td>
+                        <td>${book.author}</td>
+                        <td>${book.state}</td>
+                        <td>${book.category}</td>
+                        <td>
+                            ${role === '1' ? 
+                                `<button onclick="editBook(${book.id})">Edit</button>
+                                 <button onclick="deleteBook(${book.id})">Delete</button>` : ''}
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                    document.getElementById('myReservationsDiv').hidden = true;
+                    document.getElementById('listOfReservations').hidden = false;
+                });
+            } else {
+                console.error('Failed to fetch books');
+            }
+        });
+
+        // Fetch my reservations
+        document.getElementById("myReservationsBtn").addEventListener("click", async () => {
+            const token = localStorage.getItem('token');
+            const userId = localStorage.getItem('userId'); 
+            const response = await fetch(`http://localhost:5288/api/Reservations/GetUserReservation/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const reservations = await response.json();
+                const tableBody = document.getElementById('myReservationsTableBody');
+                tableBody.innerHTML = ''; 
+                reservations.forEach(reservation => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${reservation.reservationId}</td>
+                        <td>${reservation.title}</td>
+                        <td>${reservation.author}</td>
+                        <td>
+                            <button onclick="returnBook(${reservation.reservationId})">Return Book</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                document.getElementById('myReservationsDiv').hidden = false;
+                document.getElementById('listOfReservations').hidden = true; 
+            } else {
+                console.error('Failed to fetch reservations');
+            }
+        });
+
+        // Reserve a book
+        document.getElementById("reserveBookBtn").addEventListener("click", () => {
+            document.getElementById("reserveBookForm").hidden = false;
+        });
+
+        document.getElementById("reserveBookSubmitBtn").addEventListener("click", async () => {
+            const token = localStorage.getItem('token');
+            const bookId = document.getElementById('bookId').value;
+
+            const response = await fetch(`http://localhost:5288/api/Reservations/ReserveBook/${bookId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
+
+            if (response.ok) {
+                alert('Book reserved successfully!');
+                document.getElementById("reserveBookForm").hidden = true;
+                location.reload();
+            } else {
+                const errorData = await response.json(); 
+                if (errorData.message) {
+                    alert(errorData.message); 
+                } else {
+                    alert('Failed to reserve book. Please try again.');
+                }
+            }
+        });
+
+        // Return a reserved book
+        document.getElementById("returnBookBtn").addEventListener("click", () => {
+            document.getElementById("returnBookForm").hidden = false;
+        });
+
+        document.getElementById("returnBookSubmitBtn").addEventListener("click", async () => {
+            const token = localStorage.getItem('token');
+            const reservationId = document.getElementById('reservationId').value;
+
+            const response = await fetch(`http://localhost:5288/api/Reservations/ReturnBook/${reservationId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
+
+            if (response.ok) {
+                alert('Book returned successfully!');
+                document.getElementById("returnBookForm").hidden = true;
+                location.reload();
+            } else {
+                console.error('Failed to return book');
+                alert('Failed to return book.');
+            }
+        });
+
+        // Function to return book from reservation
+        async function returnBook(reservationId) {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`http://localhost:5288/api/Reservations/ReturnBook/${reservationId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                alert('Book returned successfully!');
+                location.reload();
+            } else {
+                console.error('Failed to return book');
+                alert('Failed to return book.');
+            }
+        }
+
+        // Logout function
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            localStorage.removeItem('userId');
+            window.location.href = 'login.html'; 
+        });
+    </script>
+</body>

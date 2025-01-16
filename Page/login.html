@@ -12,16 +12,18 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0;
         }
         .login-container {
             background: #fff;
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center; /* Center content */
         }
         .login-container h1 {
             margin-bottom: 20px;
-            text-align: center;
         }
         .login-container input {
             width: 100%;
@@ -42,6 +44,22 @@
         .login-container button:hover {
             background: #0056b3;
         }
+        .login-container a {
+            width: 100%;
+            height: 30px;
+            display: inline-block;
+            padding-top: 10px;
+            margin-top: 10px;
+            color: white;
+            background-color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+        }
+        .login-container a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -52,51 +70,57 @@
             <input type="password" id="password" placeholder="Password" required />
             <button type="submit">Login</button>
         </form>
+        <a id="register" href="register.html">Register</a>
     </div>
 
     <script>
-document.getElementById('loginForm').addEventListener('submit', async function(event) {
-    event.preventDefault();
-    
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+        document.addEventListener('DOMContentLoaded', () => {
+            localStorage.clear(); 
+            const formToReset = document.getElementById('loginForm');
+            formToReset.reset();
+            });
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
-    // Step 1: Send login request to get the token
-    const loginResponse = await fetch('http://localhost:5288/api/users/Login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-    });
+            const loginResponse = await fetch('http://localhost:5288/api/users/Login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
 
-    if (loginResponse.ok) {
-        const loginData = await loginResponse.json(); // Get the token from the login response
-        const token = loginData.token;
+            if (loginResponse.ok) {
+                const loginData = await loginResponse.json(); 
+                const token = loginData.token;
+                const userResponse = await fetch('http://localhost:5288/api/users/GetMe', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}` 
+                    }
+                });
 
-        // Step 2: Use the token to get user details (e.g., role)
-        const userResponse = await fetch('http://localhost:5288/api/users/GetMe', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}` // Send the token in the Authorization header
+                if (userResponse.ok) {
+                    const userData = await userResponse.json(); 
+                    const userRole = userData.role; 
+                    const userId = userData.id;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('role', userRole);
+                    localStorage.setItem('userId', userId);
+                    // console.log(localStorage.getItem('userId'));
+                    window.location.href = "/books2.html";
+                } else {
+                    alert('Failed to fetch user details!');
+                    
+                }
+            } else {
+                alert('Login failed!');
+                const formToReset = document.getElementById('loginForm');
+                formToReset.reset();
+                
             }
         });
-
-        if (userResponse.ok) {
-            const userData = await userResponse.json(); // Get user details from the response
-            const userRole = userData.role; // Assuming 'role' is the field returned by the GetMe endpoint
-
-            // Step 3: Save token and user role in localStorage
-            localStorage.setItem('token', token);
-            localStorage.setItem('role', userRole);
-
-            // Step 4: Redirect to the books page or appropriate page
-            window.location.href = "/books2.html";
-        } else {
-            alert('Failed to fetch user details!');
-        }
-    } else {
-        alert('Login failed!');
-    }
-});
     </script>
 </body>
 </html>
