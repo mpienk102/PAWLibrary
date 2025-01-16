@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/347f5e5d-3e6d-4aec-8152-c69b746f45e6/resourceGroups/LibraryApp_group/providers/Microsoft.Web/sites/LibraryApp",
+    "appService.deploySubpath": "bin/Publish"
+}

@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Function to stop processes
+stop_processes() {
+  echo "Stopping API..."
+  kill $API_PID
+
+  echo "Stopping Python server..."
+  kill $PYTHON_PID
+
+  echo "Stopping Docker container..."
+  docker stop library_db
+}
+
+# Trap Ctrl+C (SIGINT) and call stop_processes function
+trap stop_processes SIGINT
+
+echo "Running API"
+cd ./LibraryApi
+dotnet watch run & 
+API_PID=$!
+d ..
+
+echo "Running docker container"
+docker start library_db
+
+echo "Running python http server"
+cd ./Page
+python3 custom_server.py &
+PYTHON_PID=$!
+cd ..
+
+# Wait for both API and Python server to finish
+wait $API_PID
+wait $PYTHON_PID
+
