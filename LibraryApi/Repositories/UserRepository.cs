@@ -26,7 +26,7 @@ namespace LibraryApi.Repositories
         // Regex pattern for validating an email
         private const string EmailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
         //This regex checks if the email has the format username@domain.com.
-        
+
 
         public async Task<User> RegisterAsync(string username, string email, string password)
         {
@@ -46,7 +46,7 @@ namespace LibraryApi.Repositories
             {
                 Username = username,
                 Email = email,
-                PasswordHash = password  
+                PasswordHash = password,
             };
 
             _context.Users.Add(user);

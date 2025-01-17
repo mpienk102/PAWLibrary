@@ -1,11 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
-using LibraryApi.DTOs;
-using LibraryApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
-
+using LibraryApi.DTOs;
+using LibraryApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 [Route("api/users")]
 [ApiController]
@@ -19,6 +18,7 @@ public class UserController : ControllerBase
         _userService = userService;
         _config = config;
     }
+
     /// <summary>
     /// Get list of users
     /// </summary>
@@ -29,6 +29,7 @@ public class UserController : ControllerBase
         var users = await _userService.GetAllUsers(); // Await the async method
         return Ok(users);
     }
+
     /// <summary>
     /// Get User data by its id.
     /// </summary>
@@ -45,11 +46,12 @@ public class UserController : ControllerBase
 
         return Ok(user);
     }
+
     /// <summary>
-    /// Register user
+    /// Register user.
     /// </summary>
     /// <param name="registerDto">DTO from body</param>
-    /// <returns></returns>
+    /// <returns>.</returns>
     [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] RegisterDTO registerDto)
     {
@@ -71,13 +73,13 @@ public class UserController : ControllerBase
     }
 
     /// <summary>
-    /// Get logged in user data
+    /// Get logged in user data.
     /// </summary>
-    /// <returns>Current user data</returns>
+    /// <returns>Current user data.</returns>
     [HttpGet("GetMe")]
     public async Task<IActionResult> GetMe()
     {
-        var currentUser = await _userService.GetMe(User); // Await the async method
+        var currentUser = await _userService.GetMe(User);
         if (currentUser == null)
         {
             return Unauthorized(new { message = "User not authenticated." });
@@ -85,15 +87,16 @@ public class UserController : ControllerBase
 
         return Ok(currentUser);
     }
+
     /// <summary>
-    /// Authorize user
+    /// Authorize user.
     /// </summary>
-    /// <param name="loginDto"></param>
+    /// <param name="loginDto">.</param>
     /// <returns></returns>
     [HttpPost("Login")]
     public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
     {
-        var user = await _userService.AuthenticateAsync(loginDto.Username, loginDto.Password); // Await the async method
+        var user = await _userService.AuthenticateAsync(loginDto.Username, loginDto.Password);
         if (user == null)
         {
             return Unauthorized("Invalid credentials.");
@@ -102,6 +105,7 @@ public class UserController : ControllerBase
         var token = GenerateJwtToken(user);
         return Ok(new { Token = token });
     }
+
     /// <summary>
     /// Remove user from Db by id
     /// </summary>
@@ -123,16 +127,17 @@ public class UserController : ControllerBase
             return NotFound();
         }
 
-        _userService.Delete(userId);
+        await _userService.Delete(userId);
         return NoContent();
     }
+
     private string GenerateJwtToken(User user)
     {
         var claims = new[]
         {
             // new Claim(JwtRegisteredClaimNames.Sub, user.Username),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:Key"]));

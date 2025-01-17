@@ -1,6 +1,6 @@
+using LibraryApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using LibraryApi.Models;
 
 namespace LibraryApi.DTOs
 {

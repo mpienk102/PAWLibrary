@@ -4,7 +4,7 @@
 //     private readonly List<User> _users = new List<User>();
 //     private int _nextId = 1;
 
-    
+
 //     public InMemoryUserService()
 //     {
 //         _users.Add(new User {
@@ -37,7 +37,7 @@
 //     public Task<User?> AuthenticateAsync(string username, string password)
 //     {
 //         var user = _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
-//         if (user != null && user.PasswordHash == password) 
+//         if (user != null && user.PasswordHash == password)
 //         {
 //             return Task.FromResult(user);
 //         }
@@ -52,7 +52,7 @@
 //         var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
 //         if (userIdClaim == null)
 //         {
-//             return null; 
+//             return null;
 //         }
 //         if (int.TryParse(userIdClaim.Value, out int userId))
 //         {
@@ -60,7 +60,7 @@
 //         }
 //         else
 //         {
-//             return _users.SingleOrDefault(x => x.Username == userIdClaim.Value); 
+//             return _users.SingleOrDefault(x => x.Username == userIdClaim.Value);
 //         }
 //     }
 // }

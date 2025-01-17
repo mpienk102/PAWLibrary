@@ -10,7 +10,7 @@ public class ReservationController : ControllerBase
 {
     private readonly IReservationRepository _reservationRepository;
     private readonly IBookRepository _bookRepository;
-    private readonly IUserService _userService;  
+    private readonly IUserService _userService;
 
     public ReservationController(IReservationRepository reservationRepository, IBookRepository bookRepository, IUserService userService)
     {
@@ -56,7 +56,6 @@ public class ReservationController : ControllerBase
     [HttpPost("ReserveBook/{bookId:int}")]
     public async Task<IActionResult> ReserveBookById(int bookId)
     {
-
         var book = await _bookRepository.GetById(bookId);
         var currentUser = await _userService.GetMe(User);
         if (currentUser is null)
@@ -77,7 +76,7 @@ public class ReservationController : ControllerBase
         var reservation = new Reservation
         {
             ReservedBookId = bookId,
-            UserId = currentUser.Id
+            UserId = currentUser.Id,
         };
 
         book.State = BookState.Reserved;
@@ -106,6 +105,7 @@ public class ReservationController : ControllerBase
         {
             return NotFound(new { message = "Book not found." });
         }
+
         book.State = BookState.Available;
         await _reservationRepository.Delete(reservationId);
         return Ok(new { message = "Book returned succesfully." });
@@ -139,7 +139,7 @@ public class ReservationController : ControllerBase
                     {
                         ReservationId = reservation.ReservationId,
                         Title = book.Title,
-                        Author = book.Author
+                        Author = book.Author,
                     };
                 }
 

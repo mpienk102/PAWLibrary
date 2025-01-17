@@ -46,7 +46,7 @@ namespace LibraryApi.Models
     {
         Available,
         Unavailable,
-        Reserved
+        Reserved,
     }
 
     public enum BookCategory
@@ -54,6 +54,6 @@ namespace LibraryApi.Models
         Comedy,
         Fantasy,
         Horror,
-        Thriller
+        Thriller,
     }
 }

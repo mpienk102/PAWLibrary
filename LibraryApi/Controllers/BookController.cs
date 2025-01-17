@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
-using LibraryApi.Models;
 using LibraryApi.DTOs;
+using LibraryApi.Models;
+using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
 /// Handles book-related operations.
 /// </summary>
-//[Authorize]
+ // [Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class BookController : ControllerBase
@@ -50,7 +50,7 @@ public class BookController : ControllerBase
     /// <summary>
     /// Create a book.
     /// </summary>
-    /// <param name="newBookDTO">DTO read from body</param>
+    /// <param name="newBookDTO">DTO read from body.</param>
     /// <returns></returns>
     [HttpPost]
     public async Task<IActionResult> CreateBook([FromBody] CreateBookDTO newBookDTO)
@@ -79,7 +79,7 @@ public class BookController : ControllerBase
             Author = newBookDTO.Author,
             Description = newBookDTO.Description,
             State = newBookDTO.State,
-            Category = newBookDTO.Category
+            Category = newBookDTO.Category,
         };
 
         await _repository.Add(newBook);
@@ -119,7 +119,7 @@ public class BookController : ControllerBase
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> DeleteBook(int id)
     {
-        var currentUser = await _userService.GetMe(User); 
+        var currentUser = await _userService.GetMe(User);
 
         if (currentUser == null || currentUser.Role != UserRole.SuperUser)
         {

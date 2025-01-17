@@ -15,9 +15,9 @@
 //     {
 //         return _books.FirstOrDefault(b => b.Title == title && b.Author == author);
 //     }
-//     public IEnumerable<Book> GetByCategory([Required]string category) => 
+//     public IEnumerable<Book> GetByCategory([Required]string category) =>
 //     _books.Where(book => book.Category.Equals(category, StringComparison.OrdinalIgnoreCase));
-    
+
 //     public IEnumerable<Book> GetByAuthor([Required]string author) =>
 //     _books.Where(book => book.Author.Equals(author, StringComparison.OrdinalIgnoreCase));
 
@@ -44,8 +44,8 @@
 //             book.Title = updatedBook.Title;
 //             book.Description = updatedBook.Description;
 //             book.State = updatedBook.State;
-//             book.Category = updatedBook.Category; 
-//             book.Author = updatedBook.Author; 
+//             book.Category = updatedBook.Category;
+//             book.Author = updatedBook.Author;
 //         }
 //     }
 //     public void Delete(int id)

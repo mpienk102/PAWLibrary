@@ -36,6 +36,6 @@ public class User
 public enum UserRole
     {
         NormalUser,
-        SuperUser
+        SuperUser,
     }
 }
