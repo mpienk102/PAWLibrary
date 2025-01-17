@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using LibraryApi.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
@@ -47,7 +46,7 @@ namespace LibraryApi.Repositories
             {
                 Username = username,
                 Email = email,
-                PasswordHash = password  // You should ideally hash the password here
+                PasswordHash = password  
             };
 
             _context.Users.Add(user);

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "sJ3Jm0ePv/dVQT7+RrvmWN8YCE2kxpJVLbGhkpzgSge/pmC3wOs6nN0dIzw40++adl5skIWS3y9S6fIDkL80Bw==",
+  "dgSpecHash": "9ZmkcEN449GuyJ694mMhIQ1EtKLH0sGnBVoG60DM7cz+Om3LE2sbQhd24NshV6dubx+1HgQN/y0MmnQroHdHhA==",
   "success": true,
   "projectFilePath": "/home/mint/Desktop/PAW/LibraryApp/LibraryApi/LibraryApi.csproj",
   "expectedPackageFiles": [
@@ -47,6 +47,7 @@
     "/root/.nuget/packages/newtonsoft.json.bson/1.0.2/newtonsoft.json.bson.1.0.2.nupkg.sha512",
     "/root/.nuget/packages/npgsql/9.0.2/npgsql.9.0.2.nupkg.sha512",
     "/root/.nuget/packages/npgsql.entityframeworkcore.postgresql/9.0.2/npgsql.entityframeworkcore.postgresql.9.0.2.nupkg.sha512",
+    "/root/.nuget/packages/stylecop.analyzers/1.1.118/stylecop.analyzers.1.1.118.nupkg.sha512",
     "/root/.nuget/packages/swashbuckle.aspnetcore/6.6.2/swashbuckle.aspnetcore.6.6.2.nupkg.sha512",
     "/root/.nuget/packages/swashbuckle.aspnetcore.swagger/6.6.2/swashbuckle.aspnetcore.swagger.6.6.2.nupkg.sha512",
     "/root/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.6.2/swashbuckle.aspnetcore.swaggergen.6.6.2.nupkg.sha512",

@@ -62,21 +62,21 @@
             <summary>
             Return a list of all reservations.
             </summary>
-            <returns>List of reservations</returns>
+            <returns>List of reservations.</returns>
         </member>
         <member name="M:ReservationController.GetReservationById(System.Int32)">
             <summary>
-            Return a reservation by its Id
+            Return a reservation by its Id.
             </summary>
             <param name="reservationId"> ReservationID</param>
-            <returns>Reservation with given reservationId</returns>
+            <returns>Reservation with given reservationId.</returns>
         </member>
         <member name="M:ReservationController.ReserveBookById(System.Int32)">
             <summary>
             Reserve a book with given id.
             </summary>
-            <param name="bookId">Specific bookId</param>
-            <returns>New reservation or Code 400 on Exception</returns>
+            <param name="bookId">Specific bookId.</param>
+            <returns>New reservation or Code 400 on Exception.</returns>
         </member>
         <member name="M:ReservationController.ReturnBookById(System.Int32)">
             <summary>

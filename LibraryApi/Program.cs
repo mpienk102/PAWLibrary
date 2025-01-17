@@ -4,25 +4,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using LibraryApi.Repositories;
-using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;  // Don't forget to add this
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
-// Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add the JsonStringEnumConverter to the controller options
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
     {
         options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
     });
-
 
 builder.Services.AddAuthentication(x =>
 {
@@ -68,12 +63,13 @@ builder.Services.AddSwaggerGen(options =>
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            new string[] { }
         }
     });
 });
 
-builder.Services.AddDbContext<LibraryDbContext>(options =>
+builder.Services.AddDbContext<LibraryDbContext>(
+    options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresDb")), ServiceLifetime.Scoped);
 
 builder.Services.AddAuthentication();

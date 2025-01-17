@@ -5,19 +5,24 @@ namespace LibraryApi.Models
 public class User
 {
     [Key]
-    public int Id {get; set;}
+    public int Id { get; set; }
+
     [Required]
-    public string? Username{get; set;}
+    public string? Username{ get; set; }
+
     [Required]
-    public string? PasswordHash{get; set;}
+    public string? PasswordHash{ get; set; }
+
     [Required]
-    public string? Email{get; set;}
+    public string? Email{ get; set; }
+
     [Required]
-    public UserRole Role {get; set;}
+    public UserRole Role { get; set; }
+
     public User()
     {
-
     }
+
     public User(int id, string username, string passwordHash, string email)
     {
         Id = id;
@@ -27,7 +32,8 @@ public class User
         Role = UserRole.NormalUser;
     }
 }
-    public enum UserRole
+
+public enum UserRole
     {
         NormalUser,
         SuperUser

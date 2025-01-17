@@ -1,54 +1,57 @@
-using System.Security.Claims;
 using LibraryApi.DTOs;
 using LibraryApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-//[Authorize]
+
+[Authorize]
 [ApiController]
-[Route("api/Reservations")] 
+[Route("api/Reservations")]
 public class ReservationController : ControllerBase
 {
     private readonly IReservationRepository _reservationRepository;
     private readonly IBookRepository _bookRepository;
-    private readonly IUserService _userService;
+    private readonly IUserService _userService;  
 
-    
     public ReservationController(IReservationRepository reservationRepository, IBookRepository bookRepository, IUserService userService)
     {
         _reservationRepository = reservationRepository;
         _bookRepository = bookRepository;
         _userService = userService;
     }
+
     /// <summary>
     /// Return a list of all reservations.
     /// </summary>
-    /// <returns>List of reservations</returns>
-    [HttpGet("Browse")] 
+    /// <returns>List of reservations.</returns>
+    [HttpGet("Browse")]
     public async Task<IActionResult> GetAllReservations()
     {
         var reservations = await _reservationRepository.GetAllReservations();
         return Ok(reservations);
     }
+
     /// <summary>
-    /// Return a reservation by its Id
+    /// Return a reservation by its Id.
     /// </summary>
     /// <param name="reservationId"> ReservationID</param>
-    /// <returns>Reservation with given reservationId</returns>
+    /// <returns>Reservation with given reservationId.</returns>
     [HttpGet("SearchById/{reservationId:int}")]
     public async Task<IActionResult> GetReservationById(int reservationId)
     {
         var reservation = await _reservationRepository.GetReservationById(reservationId);
-        if (reservation is null) 
+        if (reservation is null)
         {
             return NotFound();
         }
+
         return Ok(reservation);
     }
+
     /// <summary>
     /// Reserve a book with given id.
     /// </summary>
-    /// <param name="bookId">Specific bookId</param>
-    /// <returns>New reservation or Code 400 on Exception</returns>
+    /// <param name="bookId">Specific bookId.</param>
+    /// <returns>New reservation or Code 400 on Exception.</returns>
     [Authorize]
     [HttpPost("ReserveBook/{bookId:int}")]
     public async Task<IActionResult> ReserveBookById(int bookId)
@@ -60,14 +63,17 @@ public class ReservationController : ControllerBase
         {
             return BadRequest("You`re not log in");
         }
-        if(book is null)
+
+        if (book is null)
         {
-            return NotFound(new{message = "Book not found."});
+            return NotFound(new { message = "Book not found." });
         }
-        if(book.State == BookState.Reserved || book.State == BookState.Unavailable)
+
+        if (book.State == BookState.Reserved || book.State == BookState.Unavailable)
         {
-            return NotFound(new{message = "This book is currently unavailable"});
+            return NotFound(new { message = "This book is currently unavailable" });
         }
+
         var reservation = new Reservation
         {
             ReservedBookId = bookId,
@@ -78,8 +84,9 @@ public class ReservationController : ControllerBase
         await _bookRepository.Update(bookId, book);
         await _reservationRepository.Add(reservation);
 
-        return CreatedAtAction(nameof(GetReservationById), new {reservationId = reservation.ReservationId}, reservation);
+        return CreatedAtAction(nameof(GetReservationById), new { reservationId = reservation.ReservationId }, reservation);
     }
+
     /// <summary>
     /// Return a book (delete reservation)
     /// </summary>
@@ -89,20 +96,21 @@ public class ReservationController : ControllerBase
     public async Task<IActionResult> ReturnBookById(int reservationId)
     {
         var reservation = await _reservationRepository.GetReservationById(reservationId);
-        if(reservation is null)
+        if (reservation is null)
         {
-            return NotFound(new {message = "Reservation not found."});
+            return NotFound(new { message = "Reservation not found." });
         }
 
         var book = await _bookRepository.GetById(reservation.ReservedBookId);
-        if(book is null)
+        if (book is null)
         {
-            return NotFound(new{message = "Book not found."});
+            return NotFound(new { message = "Book not found." });
         }
         book.State = BookState.Available;
         await _reservationRepository.Delete(reservationId);
-        return Ok(new{message = "Book returned succesfully."});
+        return Ok(new { message = "Book returned succesfully." });
     }
+
     /// <summary>
     /// Search for reservations assigned to specific user.
     /// </summary>
@@ -116,15 +124,12 @@ public class ReservationController : ControllerBase
         var bookIds = listOfReservations
             .Select(reservation => reservation.ReservedBookId)
             .Distinct()
-            .ToList(); 
+            .ToList();
 
-        
         var books = await _reservationRepository.GetBooksByIds(bookIds);
-        
-       
+
         var bookLookup = books.ToDictionary(book => book.Id);
 
-        
         var reservationsWithBookDetails = listOfReservations
             .Select(reservation =>
             {
@@ -137,13 +142,12 @@ public class ReservationController : ControllerBase
                         Author = book.Author
                     };
                 }
+
                 return null;
             })
-            .Where(dto => dto != null) 
-            .ToList(); 
+            .Where(dto => dto != null)
+            .ToList();
 
         return Ok(reservationsWithBookDetails);
     }
-
-
 }

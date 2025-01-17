@@ -34,7 +34,6 @@ namespace LibraryApi.Repositories
             }
         }
 
-        // Updated to filter by BookCategory (enum), not a string comparison.
         public async Task<IEnumerable<Book>> GetByCategory([Required] BookCategory category)
         {
             return await _context.Books
@@ -66,6 +65,7 @@ namespace LibraryApi.Repositories
                 existingBook.Category = updatedBook.Category;
                 existingBook.Author = updatedBook.Author;
             }
+
             await _context.SaveChangesAsync();
         }
 

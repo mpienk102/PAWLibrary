@@ -38,7 +38,11 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUserById(int id)
     {
         var user = await _userService.GetUserById(id); // Await the async method
-        if (user is null) return NotFound();
+        if (user is null)
+        {
+            return NotFound();
+        }
+
         return Ok(user);
     }
     /// <summary>
@@ -114,7 +118,10 @@ public class UserController : ControllerBase
         }
 
         var deletedUser = _userService.GetUserById(userId);
-        if (deletedUser is null) return NotFound();
+        if (deletedUser is null)
+        {
+            return NotFound();
+        }
 
         _userService.Delete(userId);
         return NoContent();

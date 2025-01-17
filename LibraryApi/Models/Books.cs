@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
+
 using Newtonsoft.Json.Converters;
 
 namespace LibraryApi.Models
@@ -8,20 +9,20 @@ namespace LibraryApi.Models
     {
         [Key]
         public int Id { get; set; }
-        
+
         [Required]
         public string? Title { get; set; }
-        
+
         [Required]
         public string? Author { get; set; }
-        
+
         [Required]
         public string? Description { get; set; }
 
-        [JsonConverter(typeof(StringEnumConverter))]  
+        [JsonConverter(typeof(StringEnumConverter))]
         [Required]
         public BookState State { get; set; }
-        
+
         [JsonConverter(typeof(StringEnumConverter))]
         [Required]
         public BookCategory Category { get; set; }
@@ -43,15 +44,16 @@ namespace LibraryApi.Models
 
     public enum BookState
     {
-        Available,   
-        Unavailable, 
+        Available,
+        Unavailable,
         Reserved
     }
+
     public enum BookCategory
     {
         Comedy,
         Fantasy,
-        Horror, 
+        Horror,
         Thriller
     }
 }

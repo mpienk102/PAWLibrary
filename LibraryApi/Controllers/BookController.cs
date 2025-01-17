@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using LibraryApi.Models;
 using LibraryApi.DTOs;
-using System.Linq;
-using System.Threading.Tasks;
 
 /// <summary>
 /// Handles book-related operations.
@@ -21,6 +18,7 @@ public class BookController : ControllerBase
         _repository = bookRepository;
         _userService = userService;
     }
+
     /// <summary>
     /// Return a list of all books.
     /// </summary>
@@ -31,6 +29,7 @@ public class BookController : ControllerBase
         var books = await _repository.GetAll();
         return Ok(books);
     }
+
     /// <summary>
     /// Return a book by its ID.
     /// </summary>
@@ -40,9 +39,14 @@ public class BookController : ControllerBase
     public async Task<IActionResult> GetBookById(int id)
     {
         var book = await _repository.GetById(id);
-        if (book == null) return NotFound();
+        if (book == null)
+        {
+            return NotFound();
+        }
+
         return Ok(book);
     }
+
     /// <summary>
     /// Create a book.
     /// </summary>
@@ -51,7 +55,7 @@ public class BookController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateBook([FromBody] CreateBookDTO newBookDTO)
     {
-        var currentUser = await _userService.GetMe(User); 
+        var currentUser = await _userService.GetMe(User);
 
         if (currentUser == null || currentUser.Role != UserRole.SuperUser)
         {
@@ -68,7 +72,7 @@ public class BookController : ControllerBase
         {
             return BadRequest($"Book with Title: '{newBookDTO.Title}' and Author: '{newBookDTO.Author}' already exists.");
         }
-        
+
         var newBook = new Book
         {
             Title = newBookDTO.Title,
@@ -81,6 +85,7 @@ public class BookController : ControllerBase
         await _repository.Add(newBook);
         return CreatedAtAction(nameof(GetBookById), new { id = newBook.Id }, newBook);
     }
+
     /// <summary>
     /// Update Book Data
     /// </summary>
@@ -89,7 +94,7 @@ public class BookController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> UpdateBook([FromBody] Book updatedBook)
     {
-        var currentUser = await _userService.GetMe(User); // Await added here
+        var currentUser = await _userService.GetMe(User);
 
         if (currentUser == null || currentUser.Role != UserRole.SuperUser)
         {
@@ -97,11 +102,15 @@ public class BookController : ControllerBase
         }
 
         var existingBook = await _repository.GetById(updatedBook.Id);
-        if (existingBook is null) return NotFound("Book with given id was not found.");
+        if (existingBook is null)
+        {
+            return NotFound("Book with given id was not found.");
+        }
 
         await _repository.Update(updatedBook.Id, updatedBook);
         return NoContent();
     }
+
     /// <summary>
     /// Delete Book by it`s Id
     /// </summary>
@@ -118,7 +127,10 @@ public class BookController : ControllerBase
         }
 
         var existingBook = await _repository.GetById(id);
-        if (existingBook is null) return NotFound("Book with given Id was not found.");
+        if (existingBook is null)
+        {
+            return NotFound("Book with given Id was not found.");
+        }
 
         await _repository.Delete(id);
         return NoContent();
@@ -139,6 +151,7 @@ public class BookController : ControllerBase
 
         return Ok(new { ListOfBooks = listOfBooks, Count = countOfBooks });
     }
+
     /// <summary>
     /// Retrieves books by an author.
     /// </summary>
