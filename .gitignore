@@ -1,0 +1,54 @@
+# Ignore build output directories
+bin/
+obj/
+
+# Ignore user-specific files
+*.user
+*.userosscache
+*.suo
+*.vcxproj.user
+
+# Ignore lock files and logs
+project.lock.json
+project.fragment.lock.json
+*.log
+
+# Ignore temporary files
+*.tmp
+*.temp
+*.cache
+*.DS_Store
+Thumbs.db
+
+# Ignore publish output
+**/Publish/
+
+# Ignore Rider IDE files
+.idea/
+
+# Ignore Visual Studio Code files
+.vscode/
+
+# Ignore npm debug log (if Node.js is used for any part)
+npm-debug.log*
+
+# Ignore static web assets cache
+**/staticwebassets/
+
+# Ignore compiled runtime files
+**/runtimes/
+
+# Ignore localization folders (if not needed in source control)
+**/cs/
+**/de/
+**/es/
+**/fr/
+**/it/
+**/ja/
+**/ko/
+**/pl/
+**/pt-BR/
+**/ru/
+**/tr/
+**/zh-Hans/
+**/zh-Hant/
