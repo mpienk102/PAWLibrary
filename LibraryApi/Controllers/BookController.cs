@@ -26,7 +26,7 @@ namespace LibraryApi.Controllers
         /// Return a list of all books.
         /// </summary>
         /// <returns>A list of books.</returns>
-        [HttpGet("Browse")]
+        [HttpGet]
         public async Task<IActionResult> GetBooks()
         {
             var books = await _repository.GetAll();
@@ -34,11 +34,11 @@ namespace LibraryApi.Controllers
         }
 
         /// <summary>
-        /// Return a book by its ID.
+        /// Return a book by it`s Id.
         /// </summary>
         /// <param name="id">The unique ID of the book.</param>
         /// <returns>The book with the given ID, or a 404 if not found.</returns>
-        [HttpGet("SearchById/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetBookById(int id)
         {
             var book = await _repository.GetById(id);
@@ -119,7 +119,7 @@ namespace LibraryApi.Controllers
         /// </summary>
         /// <param name="id">Book id</param>
         /// <returns>Code 200 or Forbid on bad permission.</returns>
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
             var currentUser = await _userService.GetMe(User);
@@ -143,9 +143,8 @@ namespace LibraryApi.Controllers
         /// Searches books by a category.
         /// </summary>
         /// <param name="category">The category to search for.</param>
-        /// <remarks>This method will be deprecated in the next release. Use `/Books/AdvancedSearch` instead.</remarks>
         /// <returns>A list of books in the given category.</returns>
-        [HttpGet("SearchByCategory/{category}")]
+        [HttpGet("search-by-category/{category}")]
         public async Task<IActionResult> GetBooksByCategory(BookCategory category)
         {
             var listOfBooks = await _repository.GetByCategory(category);
@@ -160,7 +159,7 @@ namespace LibraryApi.Controllers
         /// </summary>
         /// <param name="author">The author's name.</param>
         /// <returns>A list of books written by the specified author.</returns>
-        [HttpGet("SearchByAuthor/{author}")]
+        [HttpGet("search-by-author/{author}")]
         public async Task<IActionResult> GetBooksByAuthor(string author)
         {
             var listOfBooks = await _repository.GetByAuthor(author);

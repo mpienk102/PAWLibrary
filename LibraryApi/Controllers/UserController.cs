@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LibraryApi.Controllers
 {
-    [Route("api/users")]
+    [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -26,7 +26,7 @@ namespace LibraryApi.Controllers
         /// Get list of users
         /// </summary>
         /// <returns>List of Users</returns>
-        [HttpGet("Browse")]
+        [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userService.GetAllUsers(); // Await the async method
@@ -38,7 +38,7 @@ namespace LibraryApi.Controllers
         /// </summary>
         /// <param name="id">User ID</param>
         /// <returns>User data by given id.</returns>
-        [HttpGet("SearchById/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(int id)
         {
             var user = await _userService.GetUserById(id); // Await the async method
@@ -55,7 +55,7 @@ namespace LibraryApi.Controllers
         /// </summary>
         /// <param name="registerDto">DTO from body</param>
         /// <returns>.</returns>
-        [HttpPost("Register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO registerDto)
         {
             try
@@ -79,7 +79,7 @@ namespace LibraryApi.Controllers
         /// Get logged in user data.
         /// </summary>
         /// <returns>Current user data.</returns>
-        [HttpGet("GetMe")]
+        [HttpGet("get-me")]
         public async Task<IActionResult> GetMe()
         {
             var currentUser = await _userService.GetMe(User);
@@ -96,7 +96,7 @@ namespace LibraryApi.Controllers
         /// </summary>
         /// <param name="loginDto">.</param>
         /// <returns>.</returns>
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
             var user = await _userService.AuthenticateAsync(loginDto.Username, loginDto.Password);

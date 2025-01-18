@@ -8,7 +8,7 @@ namespace LibraryApi.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/Reservations")]
+    [Route("api/[controller]")]
     public class ReservationController : ControllerBase
     {
         private readonly IReservationRepository _reservationRepository;
@@ -26,7 +26,7 @@ namespace LibraryApi.Controllers
         /// Return a list of all reservations.
         /// </summary>
         /// <returns>List of reservations.</returns>
-        [HttpGet("Browse")]
+        [HttpGet]
         public async Task<IActionResult> GetAllReservations()
         {
             var reservations = await _reservationRepository.GetAllReservations();
@@ -38,7 +38,7 @@ namespace LibraryApi.Controllers
         /// </summary>
         /// <param name="reservationId"> ReservationID</param>
         /// <returns>Reservation with given reservationId.</returns>
-        [HttpGet("SearchById/{reservationId:int}")]
+        [HttpGet("{reservationId:int}")]
         public async Task<IActionResult> GetReservationById(int reservationId)
         {
             var reservation = await _reservationRepository.GetReservationById(reservationId);
@@ -56,7 +56,7 @@ namespace LibraryApi.Controllers
         /// <param name="bookId">Specific bookId.</param>
         /// <returns>New reservation or Code 400 on Exception.</returns>
         [Authorize]
-        [HttpPost("ReserveBook/{bookId:int}")]
+        [HttpPost("{bookId:int}")]
         public async Task<IActionResult> ReserveBookById(int bookId)
         {
             var book = await _bookRepository.GetById(bookId);
@@ -94,7 +94,7 @@ namespace LibraryApi.Controllers
         /// </summary>
         /// <param name="reservationId">Id of the reservation.</param>
         /// <returns>Code 200 and success message.</returns>
-        [HttpDelete("ReturnBook/{reservationId:int}")]
+        [HttpDelete("{reservationId:int}")]
         public async Task<IActionResult> ReturnBookById(int reservationId)
         {
             var reservation = await _reservationRepository.GetReservationById(reservationId);
@@ -119,7 +119,7 @@ namespace LibraryApi.Controllers
         /// </summary>
         /// <param name="userId">Unique user ID.</param>
         /// <returns>List of reservations assigned to specific user.</returns>
-        [HttpGet("GetUserReservation/{userId}")]
+        [HttpGet("get-user-reservation/{userId}")]
         public async Task<IActionResult> GetUserReservations(int userId)
         {
             var listOfReservations = await _reservationRepository.GetReservationsByUserId(userId);
