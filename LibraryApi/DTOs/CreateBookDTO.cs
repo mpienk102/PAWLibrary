@@ -13,7 +13,7 @@ namespace LibraryApi.DTOs
         public string? Description { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public BookState State{ get; set; }
+        public BookState State { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public BookCategory Category { get; set; }

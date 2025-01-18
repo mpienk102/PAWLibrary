@@ -6,7 +6,7 @@
   <ImplicitUsings>enable</ImplicitUsings>
   <GenerateDocumentationFile>true</GenerateDocumentationFile>
   <DisableStyleCopAnalyzers>true</DisableStyleCopAnalyzers>
-  <NoWarn>$(NoWarn);1591;SA1101;SA1600;SA1591;SA1309;SA1629</NoWarn>
+  <NoWarn>$(NoWarn);1591;SA1101;SA1600;SA1591;SA1309;SA1629;SA1602;SA1633;SA1200</NoWarn>
 </PropertyGroup>
 
   <ItemGroup>

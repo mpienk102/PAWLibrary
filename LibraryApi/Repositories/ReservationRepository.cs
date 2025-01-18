@@ -1,3 +1,4 @@
+using LibraryApi.Interfaces;
 using LibraryApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -48,6 +49,7 @@ namespace LibraryApi.Repositories
                 existingReservation.ReservedBookId = updatedReservation.ReservedBookId;
                 existingReservation.UserId = updatedReservation.UserId;
             }
+
             await _context.SaveChangesAsync();
         }
 

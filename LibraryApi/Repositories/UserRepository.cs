@@ -1,32 +1,32 @@
 using System.Security.Claims;
+using System.Text.RegularExpressions;
+using LibraryApi.Interfaces;
 using LibraryApi.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 
 namespace LibraryApi.Repositories
 {
-    public class UserRepository : IUserService
+    public class UserRepository : IUserRepository
     {
-        private readonly LibraryDbContext _context;
-
-        public UserRepository(LibraryDbContext context)
-        {
-            _context = context;
-        }
-
         // Regex pattern for validating a strong password
         // // At least one lowercase letter
         // At least one uppercase letter
         // at least one digit \d
         // at least one special character @#$%^&
         // at least 8 character in length
-        //Example password: "Examplepasword0012@!"
+        // Example password: "Examplepasword0012@!"
         private const string PasswordRegex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
 
         // Regex pattern for validating an email
         private const string EmailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-        //This regex checks if the email has the format username@domain.com.
 
+        // This regex checks if the email has the format username@domain.com.
+        private readonly LibraryDbContext _context;
+
+        public UserRepository(LibraryDbContext context)
+        {
+            _context = context;
+        }
 
         public async Task<User> RegisterAsync(string username, string email, string password)
         {
@@ -67,6 +67,7 @@ namespace LibraryApi.Repositories
             {
                 return user;
             }
+
             return null;
         }
 

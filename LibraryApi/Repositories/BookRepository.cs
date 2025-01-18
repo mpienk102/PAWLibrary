@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using LibraryApi.Interfaces;
 using LibraryApi.Models;
 using Microsoft.EntityFrameworkCore;
 
